@@ -33,7 +33,7 @@ const resolvers = {
             return db.games.find((g) => g.id === parent.game_id)
         }
     },
-    Mutation :{
+    Mutation: {
         deleteGame(_, args) {
             db.games = db.games.filter((g) => g.id !== args.id)
             return db.games;
@@ -41,10 +41,19 @@ const resolvers = {
         addGame(_, args) {
             let game = {
                 ...args.game,
-                id: Math.floor(Math.random()* 10000).toString()
+                id: Math.floor(Math.random() * 10000).toString()
             }
             db.games.push(game)
             return game;
+        },
+        updateGame(_, args) {
+            db.games = db.games.map((g) => {
+                if (g.id === args.id) {
+                    return { ...g, ...args.edits }
+                }
+                return g;
+            })
+            return db.games.find((g) => g.id === args.id)
         }
     }
 }
@@ -58,5 +67,5 @@ const { url } = await startStandaloneServer(server, {
     listen: { port: 8000 }
 });
 
-console.log("Server running at port:", 8000);
+console.log("Server running at port:", url);
 
